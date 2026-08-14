@@ -21,26 +21,23 @@ export async function POST(request: Request) {
     return NextResponse.json({ errors }, { status: 422 });
   }
 
-  const resendApiKey = process.env.RESEND_API_KEY;
-  const toEmail = process.env.CONTACT_TO_EMAIL;
+  const web3formsKey = process.env.WEB3FORMS_ACCESS_KEY;
 
-  if (resendApiKey && toEmail) {
-    const res = await fetch("https://api.resend.com/emails", {
+  if (web3formsKey) {
+    const res = await fetch("https://api.web3forms.com/submit", {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${resendApiKey}`,
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        from: "GC Career Studio <leads@gccareerstudio.com>",
-        to: [toEmail],
-        reply_to: input.email,
+        access_key: web3formsKey,
         subject: `New lead: ${input.name}`,
-        text: `Name: ${input.name}\nEmail: ${input.email}\n\nMessage:\n${input.message}`,
+        name: input.name,
+        email: input.email,
+        message: input.message,
       }),
     });
 
-    if (!res.ok) {
+    const data = await res.json().catch(() => null);
+    if (!res.ok || !data?.success) {
       return NextResponse.json(
         { error: "Failed to send message. Please try again shortly." },
         { status: 502 }
