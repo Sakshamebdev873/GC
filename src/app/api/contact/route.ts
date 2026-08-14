@@ -21,31 +21,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ errors }, { status: 422 });
   }
 
-  const web3formsKey = process.env.WEB3FORMS_ACCESS_KEY;
-
-  if (web3formsKey) {
-    const res = await fetch("https://api.web3forms.com/submit", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        access_key: web3formsKey,
-        subject: `New lead: ${input.name}`,
-        name: input.name,
-        email: input.email,
-        message: input.message,
-      }),
-    });
-
-    const data = await res.json().catch(() => null);
-    if (!res.ok || !data?.success) {
-      return NextResponse.json(
-        { error: "Failed to send message. Please try again shortly." },
-        { status: 502 }
-      );
-    }
-  } else {
-    console.log("[lead-form] New lead (email not configured):", input);
-  }
+  console.log("[lead-form] New lead (no email service configured):", input);
 
   return NextResponse.json({ ok: true });
 }

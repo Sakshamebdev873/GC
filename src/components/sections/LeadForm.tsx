@@ -20,13 +20,35 @@ export function LeadForm() {
 
     setStatus("submitting");
     try {
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
-      });
+      const web3formsKey = process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY;
 
-      if (!res.ok) throw new Error("Request failed");
+      // Web3Forms rejects requests that don't originate from the browser
+      // (their free tier blocks server-to-server calls), so this must be
+      // submitted client-side rather than proxied through our own API route.
+      // It must also be sent as FormData, not JSON: a JSON content-type
+      // triggers a CORS preflight that their API doesn't answer.
+      if (web3formsKey) {
+        const formData = new FormData();
+        formData.append("access_key", web3formsKey);
+        formData.append("subject", `New lead: ${values.name}`);
+        formData.append("name", values.name);
+        formData.append("email", values.email);
+        formData.append("message", values.message);
+
+        const res = await fetch("https://api.web3forms.com/submit", {
+          method: "POST",
+          body: formData,
+        });
+        const data = await res.json();
+        if (!data.success) throw new Error(data.message ?? "Request failed");
+      } else {
+        const res = await fetch("/api/contact", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(values),
+        });
+        if (!res.ok) throw new Error("Request failed");
+      }
 
       setStatus("success");
       setValues({ name: "", email: "", message: "" });

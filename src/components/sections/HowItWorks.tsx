@@ -35,14 +35,21 @@ export function HowItWorks() {
           align="center"
         />
 
-        <div className="mt-14 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-          {steps.map((s) => (
-            <div key={s.step} className="relative">
-              <span className="text-4xl font-bold text-accent/30">{s.step}</span>
-              <h3 className="mt-3 font-semibold text-primary">{s.title}</h3>
-              <p className="mt-2 text-sm text-muted">{s.description}</p>
-            </div>
-          ))}
+        <div className="relative mt-16">
+          <div className="absolute left-6 top-6 bottom-6 w-px bg-primary/12 sm:left-0 sm:right-0 sm:top-6 sm:bottom-auto sm:h-px sm:w-auto" />
+          <div className="grid gap-10 sm:grid-cols-4">
+            {steps.map((s) => (
+              <div key={s.step} className="relative flex gap-4 sm:block">
+                <div className="relative z-10 flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary font-serif text-base font-medium text-white">
+                  {s.step}
+                </div>
+                <div className="sm:mt-5">
+                  <h3 className="font-serif text-lg font-medium text-primary">{s.title}</h3>
+                  <p className="mt-1.5 text-sm leading-relaxed text-muted">{s.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </Container>
     </section>
