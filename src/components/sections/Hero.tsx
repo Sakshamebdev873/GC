@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
+import { GridTexture } from "@/components/ui/GridTexture";
 
 const stats = [
   { value: "500+", label: "Candidates coached" },
@@ -9,14 +10,12 @@ const stats = [
 
 export function Hero() {
   return (
-    <section className="relative overflow-hidden bg-background">
-      <div
-        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[520px] opacity-[0.06]"
-        style={{
-          backgroundImage:
-            "linear-gradient(var(--primary) 1px, transparent 1px), linear-gradient(90deg, var(--primary) 1px, transparent 1px)",
-          backgroundSize: "40px 40px",
-        }}
+    <section className="relative isolate overflow-hidden bg-background">
+      <GridTexture
+        color="var(--primary)"
+        size={40}
+        opacity={0.06}
+        className="absolute inset-x-0 top-0 -z-10 h-[520px]"
       />
 
       <Container className="relative py-20 sm:py-28">

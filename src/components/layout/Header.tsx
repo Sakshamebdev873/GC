@@ -21,9 +21,10 @@ export function Header() {
             <Link
               key={item.href}
               href={item.href}
-              className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors"
+              className="group relative text-sm font-medium text-foreground/80 transition-colors hover:text-primary"
             >
               {item.label}
+              <span className="absolute -bottom-1 left-0 h-px w-0 bg-accent-dark transition-[width] duration-200 group-hover:w-full" />
             </Link>
           ))}
         </nav>
@@ -35,7 +36,7 @@ export function Header() {
         </div>
 
         <button
-          className="md:hidden text-primary"
+          className="md:hidden text-primary transition-transform active:scale-90"
           aria-label="Toggle menu"
           aria-expanded={open}
           onClick={() => setOpen((v) => !v)}
@@ -58,7 +59,7 @@ export function Header() {
                 key={item.href}
                 href={item.href}
                 onClick={() => setOpen(false)}
-                className="rounded-lg px-3 py-2.5 text-sm font-medium text-foreground/80 hover:bg-surface hover:text-primary"
+                className="rounded-lg px-3 py-2.5 text-sm font-medium text-foreground/80 transition-colors hover:bg-surface hover:text-primary"
               >
                 {item.label}
               </Link>

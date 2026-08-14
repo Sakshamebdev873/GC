@@ -21,14 +21,17 @@ export default function ContactPage() {
         />
 
         <div className="mt-14 grid gap-10 lg:grid-cols-2">
-          <div className="rounded-2xl border border-border bg-surface p-8">
+          <div className="rounded-[28px] border border-border bg-surface p-8">
             <LeadForm />
           </div>
 
           <div className="space-y-6">
             <div>
               <p className="text-sm font-semibold text-primary">Email</p>
-              <a href={`mailto:${site.email}`} className="text-muted hover:text-primary">
+              <a
+                href={`mailto:${site.email}`}
+                className="text-muted transition-colors hover:text-primary"
+              >
                 {site.email}
               </a>
             </div>
@@ -38,8 +41,12 @@ export default function ContactPage() {
             </div>
             <div>
               <p className="text-sm font-semibold text-primary">Prefer to book directly?</p>
-              <a href="/book-a-call" className="text-accent-dark hover:underline">
-                Book a free discovery call →
+              <a
+                href="/book-a-call"
+                className="group inline-flex items-center gap-1 text-accent-dark"
+              >
+                <span className="underline-offset-2 group-hover:underline">Book a free discovery call</span>
+                <span className="transition-transform group-hover:translate-x-1">→</span>
               </a>
             </div>
           </div>

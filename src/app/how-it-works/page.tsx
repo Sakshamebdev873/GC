@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 export default function HowItWorksPage() {
   return (
     <>
-      <section className="py-20 sm:pt-24">
+      <section className="py-20 sm:py-24">
         <Container>
           <SectionHeading
             eyebrow="Your Journey"
@@ -22,7 +22,7 @@ export default function HowItWorksPage() {
           />
         </Container>
       </section>
-      <HowItWorks />
+      <HowItWorks hideHeading />
       <CTABanner />
     </>
   );

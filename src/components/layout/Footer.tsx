@@ -19,7 +19,7 @@ export function Footer() {
             <ul className="mt-3 space-y-2">
               {site.footerLinks.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} className="text-sm text-white/60 hover:text-white">
+                  <Link href={link.href} className="text-sm text-white/60 transition-colors hover:text-white">
                     {link.label}
                   </Link>
                 </li>
@@ -31,7 +31,7 @@ export function Footer() {
             <p className="text-sm font-semibold text-white">Get in touch</p>
             <ul className="mt-3 space-y-2 text-sm text-white/60">
               <li>
-                <a href={`mailto:${site.email}`} className="hover:text-white">
+                <a href={`mailto:${site.email}`} className="transition-colors hover:text-white">
                   {site.email}
                 </a>
               </li>

@@ -24,18 +24,20 @@ const steps = [
   },
 ];
 
-export function HowItWorks() {
+export function HowItWorks({ hideHeading = false }: { hideHeading?: boolean }) {
   return (
     <section className="bg-surface py-20 sm:py-24">
       <Container>
-        <SectionHeading
-          eyebrow="The Process"
-          title="How it works"
-          description="A simple, guided path from where you are to your next role."
-          align="center"
-        />
+        {!hideHeading && (
+          <SectionHeading
+            eyebrow="The Process"
+            title="How it works"
+            description="A simple, guided path from where you are to your next role."
+            align="center"
+          />
+        )}
 
-        <div className="relative mt-16">
+        <div className={hideHeading ? "relative" : "relative mt-16"}>
           <div className="absolute left-6 top-6 bottom-6 w-px bg-primary/12 sm:left-0 sm:right-0 sm:top-6 sm:bottom-auto sm:h-px sm:w-auto" />
           <div className="grid gap-10 sm:grid-cols-4">
             {steps.map((s) => (

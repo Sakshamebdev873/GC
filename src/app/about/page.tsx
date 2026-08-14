@@ -42,18 +42,23 @@ export default function AboutPage() {
               </p>
             </div>
 
-            <div className="rounded-2xl border border-border bg-surface p-6 space-y-4">
-              <div>
-                <p className="text-2xl font-bold text-primary">500+</p>
-                <p className="text-sm text-muted">Candidates coached</p>
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-primary">85%</p>
-                <p className="text-sm text-muted">Land interviews within 30 days</p>
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-primary">4.9 / 5</p>
-                <p className="text-sm text-muted">Average client rating</p>
+            <div className="rounded-[28px] bg-primary p-8 text-white">
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-white/50">
+                By the numbers
+              </p>
+              <div className="mt-6 divide-y divide-white/10">
+                <div className="py-4 first:pt-0 last:pb-0">
+                  <p className="font-serif text-3xl font-medium text-white">500+</p>
+                  <p className="mt-1 text-sm text-white/60">Candidates coached</p>
+                </div>
+                <div className="py-4 first:pt-0 last:pb-0">
+                  <p className="font-serif text-3xl font-medium text-white">85%</p>
+                  <p className="mt-1 text-sm text-white/60">Land interviews within 30 days</p>
+                </div>
+                <div className="py-4 first:pt-0 last:pb-0">
+                  <p className="font-serif text-3xl font-medium text-white">4.9 / 5</p>
+                  <p className="mt-1 text-sm text-white/60">Average client rating</p>
+                </div>
               </div>
             </div>
           </div>

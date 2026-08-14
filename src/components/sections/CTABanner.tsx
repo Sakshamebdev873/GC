@@ -1,19 +1,13 @@
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
+import { GridTexture } from "@/components/ui/GridTexture";
 
 export function CTABanner() {
   return (
     <section className="py-20 sm:py-24">
       <Container>
         <div className="relative overflow-hidden rounded-[32px] bg-primary px-8 py-16 text-center text-white sm:px-16">
-          <div
-            className="pointer-events-none absolute inset-0 opacity-[0.07]"
-            style={{
-              backgroundImage:
-                "linear-gradient(white 1px, transparent 1px), linear-gradient(90deg, white 1px, transparent 1px)",
-              backgroundSize: "36px 36px",
-            }}
-          />
+          <GridTexture color="white" size={36} opacity={0.07} />
           <div className="relative">
             <p className="flex items-center justify-center gap-3 text-sm font-semibold uppercase tracking-[0.16em] text-white/50">
               <span className="h-px w-8 bg-white/30" />

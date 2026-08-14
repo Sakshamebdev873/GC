@@ -60,12 +60,13 @@ page rewrite. `components/sections` are composed from `components/ui` and
 `content/`, so every page (`app/*/page.tsx`) is mostly just picking which
 sections to render in which order.
 
-**Lead capture → future SaaS:** `POST /api/contact` validates input
-(`src/lib/validation.ts`), then either emails the lead via Web3Forms (if
-`WEB3FORMS_ACCESS_KEY` is set — free, no account required) or logs it
-server-side. The
-`LeadFormInput` shape is deliberately the same shape a future `leads` database
-table would use, so swapping the email call for a DB write later doesn't
+**Lead capture → future SaaS:** the form (`LeadForm.tsx`) sends directly to
+Web3Forms from the browser if `NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY` is set —
+Web3Forms' free tier requires the request to originate client-side. Otherwise
+it falls back to `POST /api/contact`, which validates input
+(`src/lib/validation.ts`) and logs the lead server-side. The `LeadFormInput`
+shape is deliberately the same shape a future `leads` database table would
+use, so swapping the fallback's console log for a DB write later doesn't
 change the form or the API contract.
 
 **No auth in the MVP, on purpose:** a marketing/lead-gen site doesn't need
@@ -82,9 +83,9 @@ without the marketing site being rebuilt.
 
 - **Booking** (`/book-a-call`): embeds Calendly if `NEXT_PUBLIC_CALENDLY_URL`
   is set; otherwise shows a fallback card with a direct email contact.
-- **Lead form** (`/contact`): sends via Web3Forms if `WEB3FORMS_ACCESS_KEY`
-  is set; otherwise logs the lead to the server console and still confirms
-  success to the user.
+- **Lead form** (`/contact`): sends via Web3Forms if
+  `NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY` is set; otherwise logs the lead to the
+  server console and still confirms success to the user.
 
 This means the site is fully demoable and gradeable with zero configuration,
 while still being production-ready once real credentials are added.
