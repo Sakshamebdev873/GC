@@ -133,6 +133,8 @@ clarifying questions — see `docs/clarifying-questions.md`):
 
 ## Time taken
 
-Roughly 2 hours: requirement clarification + planning, scaffolding, all pages
-and components, lead-form + API route, responsive/visual QA in a real browser,
-and this documentation.
+Roughly 3-4 hours of active work, spread across two sessions (clarifying
+questions sent up front; the build itself proceeded on the documented
+assumptions after no reply arrived in time): scaffolding, all pages and
+components, lead-form + API route, responsive/visual QA in a real browser,
+deployment, and this documentation.
