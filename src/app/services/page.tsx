@@ -54,16 +54,16 @@ export default function ServicesPage() {
                     </div>
                   </div>
 
-                  <div className="relative aspect-[4/3] overflow-hidden rounded-[28px] border border-border bg-surface">
+                  <div className="relative min-h-[280px] overflow-hidden rounded-[28px] border border-border bg-surface">
                     <GridTexture color="var(--border)" size={28} opacity={0.35} />
                     <span className="absolute -bottom-6 -right-2 font-serif text-[10rem] font-medium leading-none text-primary/[0.06]">
                       {numeral}
                     </span>
-                    <div className="relative flex h-full flex-col items-center justify-center gap-4 p-8 text-center">
-                      <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-accent/10 text-accent-dark">
+                    <div className="relative flex min-h-[280px] flex-col items-center justify-center gap-4 p-8 text-center">
+                      <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-accent/10 text-accent-dark">
                         <ServiceIcon icon={service.icon} />
                       </div>
-                      <p className="text-sm font-semibold uppercase tracking-[0.14em] text-primary/70">
+                      <p className="max-w-[16rem] text-sm font-semibold uppercase tracking-[0.14em] text-primary/70">
                         {service.title}
                       </p>
                     </div>

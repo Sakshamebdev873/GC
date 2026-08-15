@@ -16,7 +16,7 @@ export function Header() {
           {site.shortName}
         </Link>
 
-        <nav className="hidden md:flex items-center gap-8">
+        <nav className="hidden lg:flex items-center gap-8">
           {site.nav.map((item) => (
             <Link
               key={item.href}
@@ -29,14 +29,14 @@ export function Header() {
           ))}
         </nav>
 
-        <div className="hidden md:block">
+        <div className="hidden lg:block">
           <Button href="/book-a-call" className="!px-5 !py-2.5">
             Book a Free Call
           </Button>
         </div>
 
         <button
-          className="md:hidden text-primary transition-transform active:scale-90"
+          className="lg:hidden text-primary transition-transform active:scale-90"
           aria-label="Toggle menu"
           aria-expanded={open}
           onClick={() => setOpen((v) => !v)}
@@ -52,7 +52,7 @@ export function Header() {
       </Container>
 
       {open && (
-        <div className="md:hidden border-t border-border bg-background">
+        <div className="lg:hidden border-t border-border bg-background">
           <Container className="flex flex-col gap-1 py-4">
             {site.nav.map((item) => (
               <Link
