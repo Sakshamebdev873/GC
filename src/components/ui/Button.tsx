@@ -21,12 +21,14 @@ export function Button({
   children,
   className = "",
   type,
+  onClick,
 }: {
   href?: string;
   variant?: ButtonVariant;
   children: ReactNode;
   className?: string;
   type?: "button" | "submit";
+  onClick?: () => void;
 }) {
   const classes = `${baseClasses} ${variantClasses[variant]} ${className}`;
 
@@ -39,7 +41,7 @@ export function Button({
   }
 
   return (
-    <button type={type ?? "button"} className={classes}>
+    <button type={type ?? "button"} className={classes} onClick={onClick}>
       {children}
     </button>
   );
