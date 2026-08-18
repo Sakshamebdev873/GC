@@ -36,28 +36,30 @@ export default function AboutPage() {
                 actually execute.
               </p>
               <p>
-                We work with early-career candidates, career switchers, and
-                experienced professionals alike — the throughline is always
-                the same: clarity, preparation, and a plan.
+                We work primarily with students, freshers, and early-career
+                professionals across every industry — the throughline is
+                always the same: clarity, preparation, and a plan.
               </p>
             </div>
 
+            {/* Structural facts, not performance claims — GC Career Studio
+                asked us not to invent stats before real numbers exist. */}
             <div className="rounded-[28px] bg-primary p-8 text-white">
               <p className="text-xs font-semibold uppercase tracking-[0.16em] text-white/50">
-                By the numbers
+                How we work
               </p>
               <div className="mt-6 divide-y divide-white/10">
                 <div className="py-4 first:pt-0 last:pb-0">
-                  <p className="font-serif text-3xl font-medium text-white">500+</p>
-                  <p className="mt-1 text-sm text-white/60">Candidates coached</p>
+                  <p className="font-serif text-3xl font-medium text-white">4</p>
+                  <p className="mt-1 text-sm text-white/60">Structured career packages</p>
                 </div>
                 <div className="py-4 first:pt-0 last:pb-0">
-                  <p className="font-serif text-3xl font-medium text-white">85%</p>
-                  <p className="mt-1 text-sm text-white/60">Land interviews within 30 days</p>
+                  <p className="font-serif text-3xl font-medium text-white">30–90</p>
+                  <p className="mt-1 text-sm text-white/60">Day programs, matched to your goals</p>
                 </div>
                 <div className="py-4 first:pt-0 last:pb-0">
-                  <p className="font-serif text-3xl font-medium text-white">4.9 / 5</p>
-                  <p className="mt-1 text-sm text-white/60">Average client rating</p>
+                  <p className="font-serif text-3xl font-medium text-white">1:1</p>
+                  <p className="mt-1 text-sm text-white/60">Personalized mentoring, every package</p>
                 </div>
               </div>
             </div>

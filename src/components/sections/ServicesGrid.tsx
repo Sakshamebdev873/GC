@@ -9,9 +9,9 @@ export function ServicesGrid({ compact = false }: { compact?: boolean }) {
     <section className="py-20 sm:py-24">
       <Container>
         <SectionHeading
-          eyebrow="What We Offer"
-          title="Everything you need to get hired"
-          description="Focused, practical services designed around one goal: getting you an offer."
+          eyebrow="Packages"
+          title="A structured path, whatever industry you're in"
+          description="Four packages that build on each other — start with a resume rewrite, or go all-in on end-to-end placement support."
           align="center"
         />
 
@@ -31,8 +31,17 @@ export function ServicesGrid({ compact = false }: { compact?: boolean }) {
                   <ServiceIcon icon={service.icon} />
                 </div>
                 <div>
-                  <h3 className="font-serif text-xl font-medium text-primary">{service.title}</h3>
-                  <p className="mt-1 text-sm text-muted max-w-md">{service.summary}</p>
+                  <h3 className="font-serif text-xl font-medium text-primary">
+                    {service.name}
+                    {service.recommended && (
+                      <span className="ml-2 rounded-full bg-accent/10 px-2 py-0.5 text-xs font-semibold text-accent-dark align-middle">
+                        Recommended
+                      </span>
+                    )}
+                  </h3>
+                  <p className="mt-1 text-sm text-muted max-w-md">
+                    {service.duration} · {service.tagline}
+                  </p>
                 </div>
               </div>
 

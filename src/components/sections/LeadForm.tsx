@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/Button";
 type Status = "idle" | "submitting" | "success" | "error";
 
 export function LeadForm() {
-  const [values, setValues] = useState({ name: "", email: "", message: "" });
+  const [values, setValues] = useState({ name: "", email: "", message: "", referralCode: "" });
   const [errors, setErrors] = useState<ValidationErrors>({});
   const [status, setStatus] = useState<Status>("idle");
 
@@ -34,6 +34,7 @@ export function LeadForm() {
         formData.append("name", values.name);
         formData.append("email", values.email);
         formData.append("message", values.message);
+        if (values.referralCode) formData.append("referralCode", values.referralCode);
 
         const res = await fetch("https://api.web3forms.com/submit", {
           method: "POST",
@@ -51,7 +52,7 @@ export function LeadForm() {
       }
 
       setStatus("success");
-      setValues({ name: "", email: "", message: "" });
+      setValues({ name: "", email: "", message: "", referralCode: "" });
     } catch {
       setStatus("error");
     }
@@ -110,6 +111,20 @@ export function LeadForm() {
           className="mt-1 w-full rounded-lg border border-border px-4 py-2.5 text-sm transition-colors focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
         />
         {errors.message && <p className="mt-1 text-xs text-red-600">{errors.message}</p>}
+      </div>
+
+      <div>
+        <label htmlFor="referralCode" className="text-sm font-medium text-foreground">
+          Referral code <span className="font-normal text-muted">(optional)</span>
+        </label>
+        <input
+          id="referralCode"
+          type="text"
+          value={values.referralCode}
+          onChange={(e) => setValues((v) => ({ ...v, referralCode: e.target.value }))}
+          placeholder="Referred by a friend? Enter their code"
+          className="mt-1 w-full rounded-lg border border-border px-4 py-2.5 text-sm transition-colors focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+        />
       </div>
 
       {status === "error" && (

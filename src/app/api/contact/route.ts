@@ -14,6 +14,7 @@ export async function POST(request: Request) {
     name: body.name ?? "",
     email: body.email ?? "",
     message: body.message ?? "",
+    referralCode: body.referralCode?.trim() || undefined,
   };
 
   const errors = validateLeadForm(input);
@@ -21,6 +22,8 @@ export async function POST(request: Request) {
     return NextResponse.json({ errors }, { status: 422 });
   }
 
+  // referralCode is logged alongside the lead so it's captured even before a
+  // `referrals` table exists — see docs/architecture/future-schema.md.
   console.log("[lead-form] New lead (no email service configured):", input);
 
   return NextResponse.json({ ok: true });

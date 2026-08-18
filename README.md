@@ -90,31 +90,44 @@ without the marketing site being rebuilt.
 This means the site is fully demoable and gradeable with zero configuration,
 while still being production-ready once real credentials are added.
 
-## Assumptions
+## Assumptions (updated 2026-08-18 with Mind Loop's real answers)
 
-Made explicit because they weren't specified in the brief (also sent as
-clarifying questions — see `docs/clarifying-questions.md`):
+The original assumptions below were superseded by Mind Loop's reply to
+`docs/clarifying-questions.md` on 2026-08-17. See
+[`docs/next-steps.md`](docs/next-steps.md) for the full plan reconciling the
+site against their answers — this section reflects the confirmed facts, not
+guesses.
 
-- **Audience:** job seekers across experience levels and industries, not a
-  single vertical.
-- **Services:** resume/cover letter review, LinkedIn optimization, interview
-  coaching, career/job-search strategy — the four most common consultancy
-  offerings.
-- **Primary conversion goal:** booking a free discovery call (industry-standard
-  consultancy funnel), with a secondary lead-capture form for visitors not
-  ready to book.
-- **Booking tool:** Calendly (or Cal.com), embedded — building a custom
-  scheduler isn't justified for an MVP.
-- **Branding:** no existing brand assets, so a default palette (navy `#16213E`
-  primary, warm orange `#FF7A45` accent) and Inter typeface were chosen for a
-  professional, modern, trustworthy feel. Should be revisited with real brand
-  input.
-- **Pricing:** shown publicly with three tiers (single session, package,
-  ongoing coaching) — common in this space and helps qualify leads before a
-  call; real numbers are placeholders.
-- **Testimonials/stats:** placeholder content clearly structured so it's a
-  one-file edit (`src/content/testimonials.ts`) to replace with real client
-  results.
+- **Audience:** students, freshers, and early-career professionals, across
+  every industry — not a single vertical, and not primarily experienced
+  professionals for this MVP.
+- **Geography:** India-first (INR pricing), with a global long-term vision.
+- **Services:** four structured packages, not four independent services —
+  Resume & LinkedIn (30 days), Career Acceleration (60 days), Career
+  Transformation (75 days, recommended), Premium Placement Support (90 days).
+  Each tier builds on the one before it (`src/content/services.ts`).
+- **Primary conversion goal:** "Book a Free Discovery Call" via Calendly —
+  confirmed, not assumed.
+- **Booking tool:** Calendly — confirmed.
+- **Branding:** no existing brand assets were provided; Mind Loop asked us to
+  propose the visual direction (premium, professional, modern, trustworthy,
+  clean-not-corporate). The navy `#16213E` / orange `#FF7A45` palette and
+  Inter/serif pairing from the original build were kept as that proposal;
+  open to their feedback.
+- **Pricing:** shown publicly, INR, one price per package — confirmed
+  direction; exact numbers are still placeholders (`priceINR` in
+  `src/content/services.ts`), clearly marked "indicative" in the UI.
+- **Testimonials/stats:** Mind Loop has real client feedback but hasn't sent
+  it yet, and explicitly asked us not to invent statistics or results. The
+  homepage/about "by the numbers" stats were rewritten to structural facts
+  (package count, program length, 1:1 model) instead of invented performance
+  metrics, and the testimonials section is labeled as sample content
+  pending real quotes (`src/content/testimonials.ts`).
+- **Referral system, AI resume scorer, future SaaS data model:** new
+  requirements from the reply, explicitly left to our product judgment.
+  Tracked as open decisions in `docs/next-steps.md` rather than built
+  silently — Mind Loop asked to be looped in on anything that materially
+  affects architecture.
 
 ## Scalability notes (for the SaaS direction)
 
@@ -124,6 +137,10 @@ clarifying questions — see `docs/clarifying-questions.md`):
 - **Multi-tenant readiness:** because content is already data-driven rather
   than hardcoded into JSX, the same components could later render
   per-consultant or per-client pages by parameterizing the content source.
+  This is also how the site meets the "works across industries" requirement
+  today: no page hardcodes an industry, so the same `services`/`content`
+  structure covers every vertical without a rebuild — only the copy in
+  `src/content/*.ts` would need to change for an industry-specific variant.
 - **API surface:** `/api/contact` establishes the pattern (validate → process
   → respond) that future endpoints (applications, consultant availability,
   client dashboards) would follow.

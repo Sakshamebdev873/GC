@@ -2,10 +2,13 @@ import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { GridTexture } from "@/components/ui/GridTexture";
 
+// Structural facts about the program, not performance claims — GC Career
+// Studio asked us not to invent stats or client results before real numbers
+// are available (see docs/next-steps.md).
 const stats = [
-  { value: "500+", label: "Candidates coached" },
-  { value: "85%", label: "Landed interviews within 30 days" },
-  { value: "4.9/5", label: "Average client rating" },
+  { value: "4", label: "Structured career packages" },
+  { value: "30–90", label: "Day programs, pick your starting point" },
+  { value: "1:1", label: "Personalized mentoring, not cohorts" },
 ];
 
 export function Hero() {
@@ -29,9 +32,9 @@ export function Hero() {
               Land the role you actually want.
             </h1>
             <p className="mt-6 text-lg leading-relaxed text-muted max-w-md">
-              Resume reviews, LinkedIn optimization, interview coaching, and job
-              search strategy from consultants who&apos;ve helped hundreds of
-              candidates get hired.
+              Structured career packages for students, freshers, and early-career
+              professionals — resume and LinkedIn, interview prep, 1:1 mentoring,
+              and end-to-end placement support, across every industry.
             </p>
             <div className="mt-9 flex flex-wrap gap-4">
               <Button href="/book-a-call">Book a Free Discovery Call</Button>

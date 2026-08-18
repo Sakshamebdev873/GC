@@ -2,6 +2,9 @@ export type LeadFormInput = {
   name: string;
   email: string;
   message: string;
+  /** Optional — friend's referral code. Reward logic isn't built yet; this
+   * just captures attribution so a future referrals table has the data. */
+  referralCode?: string;
 };
 
 export type ValidationErrors = Partial<Record<keyof LeadFormInput, string>>;

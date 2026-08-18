@@ -3,9 +3,10 @@ export const site = {
   shortName: "GC Career Studio",
   tagline: "Land the role you actually want.",
   description:
-    "GC Career Studio helps job seekers build standout resumes, sharpen interview skills, and navigate their job search with 1:1 expert coaching.",
+    "GC Career Studio helps students, freshers, and early-career professionals build standout resumes, sharpen interview skills, and navigate their job search with 1:1 expert coaching — across every industry.",
   email: "hello@gccareerstudio.com",
-  phone: "+1 (555) 010-2024",
+  // Placeholder — real business contact number pending from GC Career Studio.
+  phone: "+91 98765 43210",
   calendlyUrl: process.env.NEXT_PUBLIC_CALENDLY_URL ?? "",
   nav: [
     { label: "Services", href: "/services" },
@@ -21,5 +22,6 @@ export const site = {
     { label: "About", href: "/about" },
     { label: "FAQ", href: "/faq" },
     { label: "Contact", href: "/contact" },
+    { label: "AI Resume Scorer (Coming Soon)", href: "/tools/resume-scorer" },
   ],
 };

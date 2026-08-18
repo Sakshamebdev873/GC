@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { plans } from "@/content/pricing";
+import { services } from "@/content/services";
+import { formatINR } from "@/lib/format";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Button } from "@/components/ui/Button";
@@ -8,7 +9,7 @@ import { CTABanner } from "@/components/sections/CTABanner";
 
 export const metadata: Metadata = {
   title: "Pricing | GC Career Studio",
-  description: "Simple, transparent packages for every stage of your job search.",
+  description: "Simple, transparent career packages — priced in INR.",
 };
 
 export default function PricingPage() {
@@ -18,59 +19,64 @@ export default function PricingPage() {
         <Container>
           <SectionHeading
             eyebrow="Pricing"
-            title="Simple packages, no surprises"
-            description="Not sure what you need? Book a free call and we'll recommend the right starting point."
+            title="Four packages, no surprises"
+            description="Not sure what you need? Book a free call and we'll recommend the right starting point. Pricing shown in INR; final numbers to be confirmed with GC Career Studio."
             align="center"
           />
 
-          <div className="mt-14 grid gap-6 lg:grid-cols-3 lg:items-start">
-            {plans.map((plan) => (
+          <div className="mt-14 grid gap-6 lg:grid-cols-4 lg:items-start">
+            {services.map((service) => (
               <div
-                key={plan.name}
+                key={service.slug}
                 className={`relative overflow-hidden rounded-[28px] border p-8 transition-[transform,box-shadow] duration-200 ${
-                  plan.highlighted
+                  service.recommended
                     ? "border-primary bg-primary text-white shadow-xl lg:scale-[1.03]"
                     : "border-border bg-white hover:-translate-y-1 hover:shadow-lg hover:shadow-primary/5"
                 }`}
               >
-                {plan.highlighted && <GridTexture color="white" size={32} opacity={0.06} />}
+                {service.recommended && <GridTexture color="white" size={32} opacity={0.06} />}
 
                 <div className="relative">
-                  {plan.highlighted && (
-                    <span className="inline-block rounded-full bg-accent px-3 py-1 text-xs font-semibold text-white">
-                      Most Popular
-                    </span>
-                  )}
-                  <h3
-                    className={`mt-4 font-serif text-2xl font-medium ${
-                      plan.highlighted ? "text-white" : "text-primary"
+                  <span
+                    className={`inline-block rounded-full px-3 py-1 text-xs font-semibold ${
+                      service.recommended ? "bg-accent text-white" : "bg-surface text-muted"
                     }`}
                   >
-                    {plan.name}
+                    {service.recommended ? "Recommended" : service.duration}
+                  </span>
+                  <h3
+                    className={`mt-4 font-serif text-2xl font-medium ${
+                      service.recommended ? "text-white" : "text-primary"
+                    }`}
+                  >
+                    {service.name}
                   </h3>
-                  <p className={`mt-2 text-sm ${plan.highlighted ? "text-white/70" : "text-muted"}`}>
-                    {plan.description}
+                  <p className={`mt-1 text-xs font-semibold ${service.recommended ? "text-white/60" : "text-muted"}`}>
+                    {service.duration}
+                  </p>
+                  <p className={`mt-2 text-sm ${service.recommended ? "text-white/70" : "text-muted"}`}>
+                    {service.tagline}
                   </p>
                   <p className="mt-6">
-                    <span className="font-serif text-4xl font-medium">{plan.price}</span>
-                    <span className={`text-sm ${plan.highlighted ? "text-white/60" : "text-muted"}`}>
-                      {" "}/ {plan.cadence}
-                    </span>
+                    <span className="font-serif text-4xl font-medium">{formatINR(service.priceINR)}</span>
+                  </p>
+                  <p className={`text-xs ${service.recommended ? "text-white/50" : "text-muted"}`}>
+                    Indicative — to be confirmed
                   </p>
                   <ul className="mt-6 space-y-2.5">
-                    {plan.features.map((f) => (
+                    {service.additions.map((f) => (
                       <li key={f} className="flex items-start gap-2 text-sm">
-                        <span className={plan.highlighted ? "text-accent" : "text-success"}>✓</span>
-                        <span className={plan.highlighted ? "text-white/90" : ""}>{f}</span>
+                        <span className={service.recommended ? "text-accent" : "text-success"}>✓</span>
+                        <span className={service.recommended ? "text-white/90" : ""}>{f}</span>
                       </li>
                     ))}
                   </ul>
                   <Button
                     href="/book-a-call"
-                    variant={plan.highlighted ? "primary" : "ghost"}
+                    variant={service.recommended ? "primary" : "ghost"}
                     className="mt-8 w-full"
                   >
-                    {plan.cta}
+                    Book {service.name}
                   </Button>
                 </div>
               </div>

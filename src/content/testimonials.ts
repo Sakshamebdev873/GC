@@ -5,6 +5,15 @@ export type Testimonial = {
   result: string;
 };
 
+/**
+ * Sample/placeholder testimonials only. GC Career Studio has real client
+ * feedback but hasn't sent it yet — per their instruction not to invent
+ * client results, these are clearly labeled as samples in the UI
+ * (see Testimonials.tsx) and should be swapped for real quotes as soon as
+ * they're provided. See docs/next-steps.md.
+ */
+export const isSampleData = true;
+
 export const testimonials: Testimonial[] = [
   {
     name: "Priya S.",

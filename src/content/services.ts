@@ -1,63 +1,86 @@
 export type Service = {
   slug: string;
-  title: string;
-  summary: string;
-  description: string;
-  outcomes: string[];
-  icon: "resume" | "linkedin" | "interview" | "strategy";
+  name: string;
+  duration: string;
+  tagline: string;
+  /** Slug of the package this one is built on ("Everything in X, plus:") */
+  builtOnSlug?: string;
+  /** What this tier adds on top of builtOnSlug (or the full list, if no builtOnSlug) */
+  additions: string[];
+  recommended?: boolean;
+  icon: "resume" | "acceleration" | "transformation" | "placement";
+  /**
+   * Indicative price in INR. Mind Loop has not confirmed final numbers yet —
+   * treat as a placeholder until real pricing is provided. See
+   * docs/next-steps.md.
+   */
+  priceINR: number;
 };
 
 export const services: Service[] = [
   {
-    slug: "resume-review",
-    title: "Resume & Cover Letter Review",
-    summary: "Turn your resume into a document that gets past screeners and lands interviews.",
-    description:
-      "We rebuild your resume around the roles you actually want — clear achievements, ATS-friendly formatting, and language that speaks to hiring managers, not just keyword filters.",
-    outcomes: [
-      "ATS-optimized formatting and structure",
-      "Achievement-focused bullet points with real metrics",
-      "Tailored versions for your target roles",
+    slug: "resume-linkedin",
+    name: "Resume & LinkedIn",
+    duration: "30 Days",
+    tagline:
+      "Get your foundation right — a resume and LinkedIn profile built to actually get noticed.",
+    additions: [
+      "ATS-friendly Resume",
+      "LinkedIn Profile Optimization",
+      "Profile Review & Suggestions",
     ],
     icon: "resume",
+    priceINR: 4999,
   },
   {
-    slug: "linkedin-optimization",
-    title: "LinkedIn Optimization",
-    summary: "Make your profile work for you — even when you're not actively applying.",
-    description:
-      "A stronger LinkedIn presence means recruiters find you first. We optimize your headline, summary, and experience section, and show you how to build visibility in your industry.",
-    outcomes: [
-      "Recruiter-optimized headline and summary",
-      "Keyword strategy for your target industry",
-      "Guidance on building a visible, active profile",
+    slug: "career-acceleration",
+    name: "Career Acceleration",
+    duration: "60 Days",
+    tagline: "Move from a strong profile to active, strategic job search execution.",
+    builtOnSlug: "resume-linkedin",
+    additions: [
+      "Interview Preparation",
+      "Job Application Strategy",
+      "HR Guidance",
+      "Career Roadmap",
     ],
-    icon: "linkedin",
+    icon: "acceleration",
+    priceINR: 9999,
   },
   {
-    slug: "interview-coaching",
-    title: "Interview Coaching",
-    summary: "Walk into every interview prepared, confident, and ready for the hard questions.",
-    description:
-      "Live mock interviews with real feedback, tailored to your target companies and roles — behavioral, technical, and case-style formats covered.",
-    outcomes: [
-      "1:1 mock interviews with actionable feedback",
-      "Frameworks for behavioral and situational questions",
-      "Salary negotiation guidance",
+    slug: "career-transformation",
+    name: "Career Transformation",
+    duration: "75 Days",
+    tagline: "Hands-on 1:1 mentoring to take you from applying to landing offers.",
+    builtOnSlug: "career-acceleration",
+    additions: [
+      "Personalized 1:1 Career Mentoring",
+      "Weekly Progress Reviews",
+      "Mock Interviews",
+      "Networking & Referral Strategy",
+      "Offer Evaluation & Negotiation Guidance",
     ],
-    icon: "interview",
+    recommended: true,
+    icon: "transformation",
+    priceINR: 16999,
   },
   {
-    slug: "career-strategy",
-    title: "Career & Job Search Strategy",
-    summary: "A clear plan for what to apply to, how, and where — not just spray-and-pray.",
-    description:
-      "One-on-one coaching to map your target roles, build a job search system, and navigate career transitions with a plan instead of guesswork.",
-    outcomes: [
-      "Personalized job search roadmap",
-      "Target company and role identification",
-      "Ongoing accountability check-ins",
+    slug: "premium-placement",
+    name: "Premium Placement Support",
+    duration: "90 Days",
+    tagline: "End-to-end support until you land the right role — our most comprehensive package.",
+    builtOnSlug: "career-transformation",
+    additions: [
+      "Unlimited 1:1 Coaching",
+      "Priority WhatsApp Support",
+      "Advanced Mock Interviews",
+      "End-to-End Placement Support until you land the right role",
     ],
-    icon: "strategy",
+    icon: "placement",
+    priceINR: 24999,
   },
 ];
+
+export function serviceBySlug(slug: string): Service | undefined {
+  return services.find((s) => s.slug === slug);
+}

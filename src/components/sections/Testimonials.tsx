@@ -1,4 +1,4 @@
-import { testimonials } from "@/content/testimonials";
+import { testimonials, isSampleData } from "@/content/testimonials";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 
@@ -10,7 +10,12 @@ export function Testimonials() {
       <Container>
         <SectionHeading
           eyebrow="Success Stories"
-          title="Real results from real candidates"
+          title="What clients say"
+          description={
+            isSampleData
+              ? "Sample testimonials shown while we wait on real client quotes from GC Career Studio — not actual client results."
+              : undefined
+          }
           align="center"
         />
 
