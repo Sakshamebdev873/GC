@@ -22,6 +22,6 @@ export const site = {
     { label: "About", href: "/about" },
     { label: "FAQ", href: "/faq" },
     { label: "Contact", href: "/contact" },
-    { label: "AI Resume Scorer (Coming Soon)", href: "/tools/resume-scorer" },
+    { label: "AI Resume Scorer (Demo)", href: "/tools/resume-scorer" },
   ],
 };

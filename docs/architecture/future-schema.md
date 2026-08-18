@@ -40,17 +40,29 @@ a replacement — a deliberate scope call explained below.
 
 - Not production-ready as-is: SQLite's file-based storage doesn't survive
   Vercel's ephemeral serverless filesystem, so the live deployed site's
-  `/contact` form will fail its (non-fatal, try/caught) DB write in
-  production until this is pointed at a real hosted Postgres (Neon/Supabase
-  free tier — a one-line `DATABASE_URL` and `provider` change, no schema
-  changes). Locally (`npm run dev`) it works fully.
+  `/contact` and `/tools/resume-scorer` DB writes will fail their
+  (non-fatal, try/caught) inserts in production until this is pointed at a
+  real hosted Postgres (Neon/Supabase free tier — a one-line `DATABASE_URL`
+  and `provider` change, no schema changes). Locally (`npm run dev`) it
+  works fully.
 - No auth on `/internal/demo` — acceptable for a local demo, not for
   anything real. A production admin/portal view would sit behind the same
   future auth provider described in README → Architecture.
-- No reward automation for referrals, no resume upload/scoring, no
-  consultant-facing UI to create client packages or appointments — the demo
-  proves the schema and the write path, not the full feature set. Building
-  those is real, separate scope (see docs/next-steps.md).
+- No reward automation for referrals, no consultant-facing UI to create
+  client packages or appointments — the demo proves the schema and the
+  write path, not the full feature set. Building those is real, separate
+  scope (see docs/next-steps.md).
+- **Resume scorer is a working demo flow with mock scoring, not real AI.**
+  `/tools/resume-scorer` has a real upload form, a real API route
+  (`src/app/api/resume-scorer/route.ts`), and writes a real
+  `ResumeAnalysis` row — but the score and suggestions come from
+  `src/lib/resumeScorer.ts`, a deterministic function seeded from the
+  file's name and size, not from reading the file or calling an AI model.
+  The uploaded file's contents are never read or stored. This is disclosed
+  directly on the page ("Demo mode" banner) so it's never presented as real
+  AI output. Swapping in real parsing + an AI scoring call is the only
+  change needed to make it real — the upload flow, data model, and
+  package-routing logic are already load-bearing.
 
 ## Guiding principle
 

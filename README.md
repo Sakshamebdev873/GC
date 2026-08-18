@@ -48,9 +48,12 @@ npm run dev
 ```
 
 Then visit `/internal/demo` — a read-only page showing every table live.
-Submitting the form at `/contact` writes a real row there. This is additive
-and unlinked from navigation; skip it entirely and the rest of the site is
-unaffected.
+Submitting the form at `/contact`, or a resume at `/tools/resume-scorer`,
+writes a real row there. Resume scoring is a working demo flow (real
+upload, real API route, real DB write) with **mock scoring** — it never
+reads the file's contents, and says so on the page; see
+`src/lib/resumeScorer.ts`. This is all additive and unlinked from primary
+navigation; skip it entirely and the rest of the site is unaffected.
 
 ## Architecture
 

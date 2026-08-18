@@ -22,6 +22,7 @@ export function Button({
   className = "",
   type,
   onClick,
+  disabled = false,
 }: {
   href?: string;
   variant?: ButtonVariant;
@@ -29,19 +30,22 @@ export function Button({
   className?: string;
   type?: "button" | "submit";
   onClick?: () => void;
+  disabled?: boolean;
 }) {
-  const classes = `${baseClasses} ${variantClasses[variant]} ${className}`;
+  const classes = `${baseClasses} ${variantClasses[variant]} ${className} ${
+    disabled ? "pointer-events-none opacity-50 hover:translate-y-0" : ""
+  }`;
 
   if (href) {
     return (
-      <Link href={href} className={classes}>
+      <Link href={href} className={classes} aria-disabled={disabled}>
         {children}
       </Link>
     );
   }
 
   return (
-    <button type={type ?? "button"} className={classes} onClick={onClick}>
+    <button type={type ?? "button"} className={classes} onClick={onClick} disabled={disabled}>
       {children}
     </button>
   );

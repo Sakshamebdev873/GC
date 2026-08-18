@@ -98,7 +98,14 @@ Went with the recommended option on each — reasoning below and in the code.
       real `Lead` rows (referral code included), and `/internal/demo`
       shows every table live. Public site untouched — see "Demo
       implementation" in that doc for exactly what's real vs. still
-      scoped out (no auth, no reward automation, no real resume parsing).
+      scoped out (no auth, no reward automation).
+      **Second update (same day):** `/tools/resume-scorer` upgraded from a
+      static placeholder to a working demo flow — real file upload, a real
+      API route, a real `ResumeAnalysis` row written per submission, and a
+      package recommendation based on the (mock) score. Scoring is
+      deterministic and disclosed as "Demo mode" on the page — no file
+      contents are read or stored, no real AI call happens. See
+      "Resume scorer is a working demo flow" in future-schema.md.
 
 ## Tier 3 — Optional polish (initiative signal) — ✅ done (2026-08-18)
 
