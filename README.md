@@ -37,6 +37,21 @@ npm run build   # production build
 npm run lint    # eslint
 ```
 
+**Optional — future-schema demo:** the site itself needs no database, but a
+working demo of the future SaaS data model lives alongside it (see
+**Scalability notes** below). To try it:
+
+```bash
+npx prisma migrate dev   # creates prisma/dev.db from prisma/schema.prisma
+npm run db:seed          # seeds packages, a consultant, a demo client, etc.
+npm run dev
+```
+
+Then visit `/internal/demo` — a read-only page showing every table live.
+Submitting the form at `/contact` writes a real row there. This is additive
+and unlinked from navigation; skip it entirely and the rest of the site is
+unaffected.
+
 ## Architecture
 
 ```
@@ -133,7 +148,13 @@ guesses.
 
 - **Data layer:** `content/*.ts` → straightforward migration path to Postgres
   (via Prisma) or a headless CMS once services/pricing need to be admin-editable
-  without a deploy.
+  without a deploy. This isn't just a claim — `prisma/schema.prisma` implements
+  the full future data model (leads, clients, packages, consultants, client
+  packages, appointments, progress reviews, referrals, resume analyses) on
+  SQLite, seeded and wired to a real write path from `/contact`. See
+  **Optional — future-schema demo** above to run it, and
+  [`docs/architecture/future-schema.md`](docs/architecture/future-schema.md)
+  for the ERD and exactly what's demo-only vs. production-ready.
 - **Multi-tenant readiness:** because content is already data-driven rather
   than hardcoded into JSX, the same components could later render
   per-consultant or per-client pages by parameterizing the content source.

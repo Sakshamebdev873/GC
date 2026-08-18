@@ -1,0 +1,140 @@
+// Demo implementation of the SaaS data model sketched in
+// docs/architecture/future-schema.md. SQLite so it runs with zero external
+// setup for a live demo — see that doc's "Swapping to Postgres for
+// production" note for what changes to go live for real.
+//
+// This is additive: the public marketing site still reads from
+// src/content/*.ts (see README → Architecture). Nothing here replaces that.
+// It exists so the "future SaaS direction" isn't just a diagram — leads
+// submitted through /contact land in the `Lead` table below, and
+// /internal/demo shows the rest of the schema working end to end.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Lead {
+  id           String   @id @default(cuid())
+  name         String
+  email        String
+  message      String
+  referralCode String?
+  source       String   @default("web-form")
+  status       String   @default("new") // new | qualified | converted
+  createdAt    DateTime @default(now())
+
+  client   Client?
+  referral Referral? @relation("ReferralConversion")
+}
+
+model Client {
+  id        String   @id @default(cuid())
+  leadId    String?  @unique
+  lead      Lead?    @relation(fields: [leadId], references: [id])
+  name      String
+  email     String
+  phone     String?
+  createdAt DateTime @default(now())
+
+  clientPackages  ClientPackage[]
+  referralsMade   Referral[]       @relation("ReferralsMade")
+  resumeAnalyses  ResumeAnalysis[]
+}
+
+model Package {
+  id             String   @id @default(cuid())
+  slug           String   @unique
+  name           String
+  durationDays   Int
+  priceINR       Int
+  recommended    Boolean  @default(false)
+  builtOnId      String?
+  builtOn        Package? @relation("PackageTier", fields: [builtOnId], references: [id])
+  builtOnBy      Package[] @relation("PackageTier")
+
+  features           PackageFeature[]
+  clientPackages     ClientPackage[]
+  recommendedFor     ResumeAnalysis[]
+}
+
+model PackageFeature {
+  id        String  @id @default(cuid())
+  packageId String
+  package   Package @relation(fields: [packageId], references: [id])
+  label     String
+  sortOrder Int
+}
+
+model Consultant {
+  id           String  @id @default(cuid())
+  name         String
+  email        String  @unique
+  bio          String
+  specialties  String // JSON-encoded string[] (SQLite has no native array type)
+
+  clientPackages ClientPackage[]
+}
+
+model ClientPackage {
+  id           String    @id @default(cuid())
+  clientId     String
+  client       Client    @relation(fields: [clientId], references: [id])
+  packageId    String
+  package      Package   @relation(fields: [packageId], references: [id])
+  consultantId String?
+  consultant   Consultant? @relation(fields: [consultantId], references: [id])
+  startDate    DateTime
+  endDate      DateTime?
+  status       String    @default("active") // active | completed | paused
+
+  appointments     Appointment[]
+  progressReviews  ProgressReview[]
+}
+
+model Appointment {
+  id              String        @id @default(cuid())
+  clientPackageId String
+  clientPackage   ClientPackage @relation(fields: [clientPackageId], references: [id])
+  type            String // discovery_call | mock_interview | coaching_session
+  calendlyEventId String?
+  scheduledAt     DateTime
+  status          String        @default("scheduled") // scheduled | completed | no_show | cancelled
+}
+
+model ProgressReview {
+  id              String        @id @default(cuid())
+  clientPackageId String
+  clientPackage   ClientPackage @relation(fields: [clientPackageId], references: [id])
+  weekNumber      Int
+  notes           String
+  createdAt       DateTime      @default(now())
+}
+
+model Referral {
+  id               String   @id @default(cuid())
+  referrerClientId String
+  referrerClient   Client   @relation("ReferralsMade", fields: [referrerClientId], references: [id])
+  code             String   @unique
+  referredLeadId   String?  @unique
+  referredLead     Lead?    @relation("ReferralConversion", fields: [referredLeadId], references: [id])
+  rewardType       String // free_session | cashback | extended_timeline
+  rewardStatus     String   @default("pending") // pending | earned | redeemed
+  createdAt        DateTime @default(now())
+}
+
+model ResumeAnalysis {
+  id                  String   @id @default(cuid())
+  clientId            String?
+  client              Client?  @relation(fields: [clientId], references: [id])
+  fileRef             String
+  atsScore            Int
+  suggestions         String // JSON-encoded string[]
+  recommendedPackageId String?
+  recommendedPackage  Package? @relation(fields: [recommendedPackageId], references: [id])
+  createdAt           DateTime @default(now())
+}

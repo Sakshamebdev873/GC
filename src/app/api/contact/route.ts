@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { validateLeadForm, type LeadFormInput } from "@/lib/validation";
+import { prisma } from "@/lib/prisma";
 
 export async function POST(request: Request) {
   let body: Partial<LeadFormInput>;
@@ -22,9 +23,24 @@ export async function POST(request: Request) {
     return NextResponse.json({ errors }, { status: 422 });
   }
 
-  // referralCode is logged alongside the lead so it's captured even before a
-  // `referrals` table exists — see docs/architecture/future-schema.md.
   console.log("[lead-form] New lead (no email service configured):", input);
+
+  // Also persist to the future-schema demo DB (see
+  // docs/architecture/future-schema.md and /internal/demo). Best-effort:
+  // the DB is a demo addition, not a hard dependency of the contact form,
+  // so a write failure here must never block a real lead's confirmation.
+  try {
+    await prisma.lead.create({
+      data: {
+        name: input.name,
+        email: input.email,
+        message: input.message,
+        referralCode: input.referralCode,
+      },
+    });
+  } catch (err) {
+    console.error("[lead-form] Demo DB write failed (non-fatal):", err);
+  }
 
   return NextResponse.json({ ok: true });
 }

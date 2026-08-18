@@ -24,11 +24,11 @@ export default function PricingPage() {
             align="center"
           />
 
-          <div className="mt-14 grid gap-6 lg:grid-cols-4 lg:items-start">
+          <div className="mt-14 grid gap-6 lg:grid-cols-4 lg:items-stretch">
             {services.map((service) => (
               <div
                 key={service.slug}
-                className={`relative overflow-hidden rounded-[28px] border p-8 transition-[transform,box-shadow] duration-200 ${
+                className={`relative flex h-full flex-col overflow-hidden rounded-[28px] border p-8 transition-[transform,box-shadow] duration-200 ${
                   service.recommended
                     ? "border-primary bg-primary text-white shadow-xl lg:scale-[1.03]"
                     : "border-border bg-white hover:-translate-y-1 hover:shadow-lg hover:shadow-primary/5"
@@ -36,9 +36,9 @@ export default function PricingPage() {
               >
                 {service.recommended && <GridTexture color="white" size={32} opacity={0.06} />}
 
-                <div className="relative">
+                <div className="relative flex h-full flex-col">
                   <span
-                    className={`inline-block rounded-full px-3 py-1 text-xs font-semibold ${
+                    className={`inline-block self-start rounded-full px-3 py-1 text-xs font-semibold ${
                       service.recommended ? "bg-accent text-white" : "bg-surface text-muted"
                     }`}
                   >
@@ -74,7 +74,7 @@ export default function PricingPage() {
                   <Button
                     href="/book-a-call"
                     variant={service.recommended ? "primary" : "ghost"}
-                    className="mt-8 w-full"
+                    className="mt-8 w-full lg:mt-auto"
                   >
                     Book {service.name}
                   </Button>

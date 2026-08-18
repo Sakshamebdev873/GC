@@ -92,6 +92,13 @@ Went with the recommended option on each — reasoning below and in the code.
       mapping table from today's `content/*.ts`/`validation.ts` shapes to
       the future tables. No auth, dashboards, or DB code added — scoped per
       their "do not over-engineer" instruction.
+      **Update (2026-08-18):** built as a live demo on request — Prisma +
+      SQLite implementing the full schema (`prisma/schema.prisma`), seeded
+      with representative data (`prisma/seed.mjs`), `/contact` now writes
+      real `Lead` rows (referral code included), and `/internal/demo`
+      shows every table live. Public site untouched — see "Demo
+      implementation" in that doc for exactly what's real vs. still
+      scoped out (no auth, no reward automation, no real resume parsing).
 
 ## Tier 3 — Optional polish (initiative signal) — ✅ done (2026-08-18)
 
