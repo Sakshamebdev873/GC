@@ -30,7 +30,7 @@ export async function POST(request: Request) {
   // the DB is a demo addition, not a hard dependency of the contact form,
   // so a write failure here must never block a real lead's confirmation.
   try {
-    await prisma.lead.create({
+    const lead = await prisma.lead.create({
       data: {
         name: input.name,
         email: input.email,
@@ -38,6 +38,23 @@ export async function POST(request: Request) {
         referralCode: input.referralCode,
       },
     });
+
+    // Attribution only — this links the lead to whoever referred them so
+    // the relationship is visible to admins immediately. It must NOT set
+    // the referral's rewardStatus: Mind Loop was explicit that a reward is
+    // earned only when this lead later converts to a client, not merely by
+    // submitting a code. See src/app/api/admin/convert-lead/route.ts.
+    if (input.referralCode) {
+      const referral = await prisma.referral.findUnique({
+        where: { code: input.referralCode },
+      });
+      if (referral && !referral.referredLeadId) {
+        await prisma.referral.update({
+          where: { id: referral.id },
+          data: { referredLeadId: lead.id },
+        });
+      }
+    }
   } catch (err) {
     console.error("[lead-form] Demo DB write failed (non-fatal):", err);
   }
