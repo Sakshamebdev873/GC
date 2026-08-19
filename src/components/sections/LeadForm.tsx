@@ -36,6 +36,18 @@ export function LeadForm() {
         formData.append("message", values.message);
         if (values.referralCode) formData.append("referralCode", values.referralCode);
 
+        // Also persist to the demo DB (Lead row + referral attribution) so
+        // /internal/admin stays accurate even when Web3Forms handles the
+        // actual email delivery. Fire-and-forget: the DB write is a demo
+        // addition, not a hard dependency of the contact form, so it must
+        // never block or fail the real send below (mirrors /api/contact's
+        // own best-effort handling of this same write).
+        fetch("/api/contact", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(values),
+        }).catch(() => {});
+
         const res = await fetch("https://api.web3forms.com/submit", {
           method: "POST",
           body: formData,
