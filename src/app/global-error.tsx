@@ -31,7 +31,7 @@ export default function GlobalError({
           padding: "2rem",
         }}
       >
-        <p style={{ fontSize: "0.875rem", fontWeight: 600, color: "#b5502e" }}>
+        <p style={{ fontSize: "0.875rem", fontWeight: 600, color: "#2f6feb" }}>
           Error
         </p>
         <h1 style={{ fontSize: "1.75rem", fontWeight: 600, margin: 0 }}>
@@ -49,7 +49,7 @@ export default function GlobalError({
             fontSize: "0.875rem",
             fontWeight: 600,
             color: "#fff",
-            background: "#b5502e",
+            background: "#2f6feb",
             border: "none",
             cursor: "pointer",
           }}
