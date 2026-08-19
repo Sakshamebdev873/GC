@@ -68,6 +68,25 @@ referral system works** below for the mechanics. Both `/internal/*` pages
 are open by default; set `ADMIN_USER`/`ADMIN_PASSWORD` in `.env.local` to
 gate them (see **Security considerations**).
 
+## Deployment
+
+Live at **https://gc-nine-mu.vercel.app/** — deployed on Vercel directly
+from this repo's `main` branch (zero-config: Vercel auto-detects Next.js,
+runs `npm install && npm run build`, no custom build settings needed).
+
+To deploy your own copy:
+
+1. Import the GitHub repo into [Vercel](https://vercel.com/new).
+2. Set environment variables in the Vercel project settings (Settings →
+   Environment Variables) — same keys as `.env.example`:
+   `NEXT_PUBLIC_CALENDLY_URL`, `NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY`,
+   `DATABASE_URL`, `ADMIN_USER`, `ADMIN_PASSWORD`. All are optional — see
+   **Graceful fallbacks** below for what happens when they're unset.
+3. If using the Postgres demo layer, run `npx prisma migrate dev` and
+   `npm run db:seed` locally against the same `DATABASE_URL` before or
+   after the first deploy — Vercel doesn't run migrations automatically.
+4. Deploy. Every push to `main` redeploys automatically.
+
 ## Architecture
 
 ```
