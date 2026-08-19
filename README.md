@@ -18,8 +18,11 @@ what was decided in their absence.
 - **Vercel** (recommended deploy target) — zero-config deploys from this repo,
   free tier is sufficient for an MVP.
 
-No database, CMS, or auth in this MVP — see **Architecture** for why the
-codebase is still structured to grow into those.
+No database, CMS, or auth in the public marketing site itself — see
+**Architecture** for why the codebase is still structured to grow into
+those. A demo SaaS data layer (Prisma + SQLite) and an optional admin
+Basic Auth gate exist alongside it — see **Database / schema overview**
+and **Security considerations** below.
 
 ## Getting started
 
@@ -54,6 +57,13 @@ upload, real API route, real DB write) with **mock scoring** — it never
 reads the file's contents, and says so on the page; see
 `src/lib/resumeScorer.ts`. This is all additive and unlinked from primary
 navigation; skip it entirely and the rest of the site is unaffected.
+
+Visit `/internal/admin` to drive the referral flow: convert an open lead
+to a client ("Mark converted") and see any inbound referral reward flip
+from `pending` to `earned`, then mark it `redeemed`. See **How the
+referral system works** below for the mechanics. Both `/internal/*` pages
+are open by default; set `ADMIN_USER`/`ADMIN_PASSWORD` in `.env.local` to
+gate them (see **Security considerations**).
 
 ## Architecture
 
@@ -97,6 +107,143 @@ consideration: the marketing site and the eventual product dashboard can live
 in the same Next.js app, sharing the same `components/ui` and design tokens,
 without the marketing site being rebuilt.
 
+## Database / schema overview
+
+The demo Prisma schema (`prisma/schema.prisma`, SQLite) implements the
+future SaaS data model end to end — see
+[`docs/architecture/future-schema.md`](docs/architecture/future-schema.md)
+for the full ERD. Ten entities: `Lead`, `Client`, `Package`,
+`PackageFeature`, `Consultant`, `ClientPackage`, `Appointment`,
+`ProgressReview`, `Referral`, `ResumeAnalysis`. The public marketing site
+still reads from `src/content/*.ts` — this schema is a parallel, additive
+demo layer proving the migration path, not a replacement (see
+**Architecture** above for why).
+
+## Key user flows
+
+1. **Visitor → lead:** `/` or any marketing page → `/contact` → `LeadForm`
+   submits to Web3Forms (if configured) or falls back to
+   `POST /api/contact`, which validates input, logs the lead, and writes a
+   `Lead` row to the demo DB. An optional referral code is captured and,
+   if it matches an existing `Referral.code`, linked immediately
+   (attribution) — see **How the referral system works** below.
+2. **Visitor → booking:** `/book-a-call` embeds Calendly
+   (`NEXT_PUBLIC_CALENDLY_URL`) or shows a fallback contact card if unset.
+3. **Visitor → resume score:** `/tools/resume-scorer` → upload → real API
+   route (`/api/resume-scorer`) → deterministic mock score + suggestions
+   (never reads file contents) → `ResumeAnalysis` row written → package
+   recommendation shown with a CTA to book a call or browse packages.
+   Explicitly labeled "Demo mode" throughout.
+4. **Lead → client (admin):** `/internal/admin` lists leads not yet
+   converted. An admin clicks "Mark converted", which creates a `Client`
+   row, updates the `Lead.status`, earns any pending inbound referral
+   reward, and issues the new client their own referral code.
+5. **Referral loop:** Client A gets a code on conversion → shares it →
+   Lead B submits it via `/contact` (attribution, no reward yet) → admin
+   converts Lead B → Client A's referral reward flips `pending → earned` →
+   admin marks it `redeemed` once fulfilled operationally.
+
+## How the referral system works
+
+Reward types (Free Session, Bonus Service/Upgrade, Extended Timeline) live
+in one place — [`src/content/referralRewards.ts`](src/content/referralRewards.ts)
+— the same content-layer pattern as `services.ts`/`testimonials.ts`.
+`Referral.rewardType` in the database is a plain string validated against
+that list at the application layer, not a hardcoded enum, so adding or
+renaming a reward type is a one-object edit, never a migration.
+
+The flow is deliberately conversion-gated, per Mind Loop's explicit
+instruction that a reward must never be earned just because someone typed
+a code into the lead form:
+
+1. A client is issued a unique referral code the moment they convert
+   (`src/lib/referralCode.ts`, called from
+   `src/app/api/admin/convert-lead/route.ts`).
+2. A new lead submitting that code via `/contact`
+   (`src/app/api/contact/route.ts`) links it to the existing `Referral`
+   row immediately — this is attribution only. `rewardStatus` stays
+   `pending`.
+3. Only when an admin marks *that* lead "converted" on
+   `/internal/admin` does the referrer's reward flip to `earned`
+   (`src/app/api/admin/convert-lead/route.ts`).
+4. An admin marks a reward `redeemed` from the same page
+   (`src/app/api/admin/redeem-referral/route.ts`) once it's been fulfilled
+   operationally — this step is intentionally manual, not automated.
+
+Admin-side visibility of the referral relationship and reward status
+(`/internal/admin`) was prioritized over a full referral dashboard, per
+Mind Loop's explicit "admin visibility over complexity" preference for
+the MVP.
+
+## API / integration decisions
+
+- **`POST /api/contact`** — validates server-side (`src/lib/validation.ts`)
+  regardless of whether Web3Forms or the fallback path is used, so
+  validation logic isn't duplicated client vs. server.
+- **Web3Forms over a custom email service** — free tier, no backend
+  credentials to manage for this assessment, and the destination inbox is
+  fully configurable by swapping `NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY` — no
+  code change needed for GC to point leads at their own inbox later.
+- **`POST /api/admin/convert-lead`, `POST /api/admin/redeem-referral`** —
+  plain Route Handlers accepting form-encoded POSTs (not JSON), so the
+  admin page's action buttons work as ordinary HTML forms with zero
+  client-side JavaScript — consistent with this repo's preference for
+  server-rendered pages over client state where possible.
+- **Optional Basic Auth (`src/proxy.ts`)** — gates `/internal/*` and
+  `/api/admin/*` only when `ADMIN_USER`/`ADMIN_PASSWORD` are set, following
+  the same "off by default, zero-config still works" pattern as Calendly
+  and Web3Forms elsewhere in this repo. Named `proxy.ts`, not
+  `middleware.ts` — this Next.js version renamed the file convention (see
+  `docs/round-2-response.md`).
+
+## Security considerations
+
+- No secrets are committed. `.env` is gitignored; only `.env.example`
+  (with empty placeholder values) is tracked. Verified via
+  `git log --all -- .env` returning no history.
+- `/internal/demo` is read-only and safe to leave open even
+  unauthenticated — it exposes demo data only.
+- `/internal/admin` performs real mutations (lead conversion, referral
+  redemption) and is gated by the optional Basic Auth proxy described
+  above. It ships off by default for local/assessment use; set
+  `ADMIN_USER`/`ADMIN_PASSWORD` before relying on it in any shared
+  deployment.
+- All API routes validate and sanitize input server-side
+  (`src/lib/validation.ts`) rather than trusting client-side validation
+  alone.
+- SQLite is a local file, unsuitable for Vercel's ephemeral filesystem in
+  production — see **Scalability notes** for the Postgres swap path.
+
+## What's mocked vs. actually functional
+
+| Feature | Status |
+|---|---|
+| Lead capture (`/contact`) | **Functional** — real validation, real email delivery (Web3Forms) or server log, real DB write. |
+| Calendly booking | **Functional** — real embed once `NEXT_PUBLIC_CALENDLY_URL` is set. |
+| Pricing/services content | **Functional but indicative** — real structured data, placeholder prices explicitly labeled "to be confirmed". |
+| Testimonials | **Mocked, disclosed** — sample content only, labeled as such; swapping in real quotes is a one-file edit (`src/content/testimonials.ts`). |
+| AI Resume Scorer | **Mocked, disclosed** — real upload/API/DB flow, but scoring is a deterministic function seeded from filename/size (`src/lib/resumeScorer.ts`), not a real AI call. File contents are never read or stored. Labeled "Demo mode" on the page. |
+| Referral system | **Functional** — real code generation, attribution, and conversion-triggered reward earning. Reward *redemption* (actually fulfilling the free session/bonus/extension) is a manual operational step once marked "earned". |
+| `/internal/admin` and `/internal/demo` | **Functional demo tooling** — not production admin UX; unauthenticated by default. |
+
+## Known limitations
+
+- SQLite doesn't survive Vercel's serverless filesystem — demo DB writes
+  will silently no-op (caught, non-fatal) on the live deployment until
+  `DATABASE_URL` points at a hosted Postgres instance (Neon/Supabase free
+  tier — a one-line config change, no schema changes).
+- A `Referral` row currently supports exactly one referred lead
+  (`referredLeadId` is unique per referral). A client wanting to refer
+  multiple people needs multiple codes issued manually today — a
+  many-referrals-per-client model is a straightforward future schema
+  change, not built here to avoid over-engineering the MVP.
+- `/internal/admin`'s Basic Auth is a lightweight stand-in, not a real
+  auth system — fine for this stage, not for a production admin surface.
+- No automated tests in this repo — verification is `npm run lint` +
+  `npm run build` + manual/browser checks, documented per change in
+  `docs/next-steps.md`, `docs/round-2-response.md`, and
+  `docs/superpowers/plans/2026-08-19-client-feedback-round2.md`.
+
 ## Graceful fallbacks (no environment config required)
 
 - **Booking** (`/book-a-call`): embeds Calendly if `NEXT_PUBLIC_CALENDLY_URL`
@@ -127,11 +274,11 @@ guesses.
 - **Primary conversion goal:** "Book a Free Discovery Call" via Calendly —
   confirmed, not assumed.
 - **Booking tool:** Calendly — confirmed.
-- **Branding:** no existing brand assets were provided; Mind Loop asked us to
-  propose the visual direction (premium, professional, modern, trustworthy,
-  clean-not-corporate). The navy `#16213E` / orange `#FF7A45` palette and
-  Inter/serif pairing from the original build were kept as that proposal;
-  open to their feedback.
+- **Branding:** Mind Loop's round-2 review explicitly ruled out orange.
+  The palette is now navy `#1c2b3a` (primary) paired with blue `#2f6feb`
+  (accent) — modern, premium, and minimal per their brief, while staying
+  approachable rather than reading as a traditional corporate consultancy.
+  Inter/serif pairing unchanged.
 - **Pricing:** shown publicly, INR, one price per package — confirmed
   direction; exact numbers are still placeholders (`priceINR` in
   `src/content/services.ts`), clearly marked "indicative" in the UI.
@@ -146,6 +293,13 @@ guesses.
   Tracked as open decisions in `docs/next-steps.md` rather than built
   silently — Mind Loop asked to be looped in on anything that materially
   affects architecture.
+- **Round 2 (2026-08-19):** Mind Loop's second review confirmed the
+  round-1 direction and gave explicit direction on referral reward types
+  (configurable; Free Session / Bonus Service-Upgrade / Extended
+  Timeline), conversion-gated reward triggering, the real Calendly link,
+  and a "not orange" color preference. See
+  [`docs/round-2-response.md`](docs/round-2-response.md) for the full
+  reconciliation.
 
 ## Scalability notes (for the SaaS direction)
 
@@ -158,6 +312,10 @@ guesses.
   **Optional — future-schema demo** above to run it, and
   [`docs/architecture/future-schema.md`](docs/architecture/future-schema.md)
   for the ERD and exactly what's demo-only vs. production-ready.
+- **Referral rewards:** reward types live in `src/content/referralRewards.ts`,
+  the same content-layer pattern as `services.ts`/`testimonials.ts` — adding
+  a fourth reward type (or renaming one) is a one-object edit, no
+  restructuring, no migration.
 - **Multi-tenant readiness:** because content is already data-driven rather
   than hardcoded into JSX, the same components could later render
   per-consultant or per-client pages by parameterizing the content source.
