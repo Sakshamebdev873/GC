@@ -20,7 +20,7 @@ what was decided in their absence.
 
 No database, CMS, or auth in the public marketing site itself — see
 **Architecture** for why the codebase is still structured to grow into
-those. A demo SaaS data layer (Prisma + SQLite) and an optional admin
+those. A demo SaaS data layer (Prisma + Postgres) and an optional admin
 Basic Auth gate exist alongside it — see **Database / schema overview**
 and **Security considerations** below.
 
@@ -42,10 +42,13 @@ npm run lint    # eslint
 
 **Optional — future-schema demo:** the site itself needs no database, but a
 working demo of the future SaaS data model lives alongside it (see
-**Scalability notes** below). To try it:
+**Scalability notes** below). It runs on Postgres — get a free instance from
+[Neon](https://neon.tech) or [Supabase](https://supabase.com), set
+`DATABASE_URL` in `.env` (the Prisma CLI reads `.env`, not `.env.local`) to
+its connection string, then:
 
 ```bash
-npx prisma migrate dev   # creates prisma/dev.db from prisma/schema.prisma
+npx prisma migrate dev   # creates the schema from prisma/schema.prisma
 npm run db:seed          # seeds packages, a consultant, a demo client, etc.
 npm run dev
 ```
@@ -109,7 +112,7 @@ without the marketing site being rebuilt.
 
 ## Database / schema overview
 
-The demo Prisma schema (`prisma/schema.prisma`, SQLite) implements the
+The demo Prisma schema (`prisma/schema.prisma`, Postgres) implements the
 future SaaS data model end to end — see
 [`docs/architecture/future-schema.md`](docs/architecture/future-schema.md)
 for the full ERD. Ten entities: `Lead`, `Client`, `Package`,
@@ -211,8 +214,8 @@ the MVP.
 - All API routes validate and sanitize input server-side
   (`src/lib/validation.ts`) rather than trusting client-side validation
   alone.
-- SQLite is a local file, unsuitable for Vercel's ephemeral filesystem in
-  production — see **Scalability notes** for the Postgres swap path.
+- The demo DB runs on Postgres (Neon), not a local SQLite file, so writes
+  persist correctly on Vercel's ephemeral filesystem in production.
 
 ## What's mocked vs. actually functional
 
@@ -228,10 +231,6 @@ the MVP.
 
 ## Known limitations
 
-- SQLite doesn't survive Vercel's serverless filesystem — demo DB writes
-  will silently no-op (caught, non-fatal) on the live deployment until
-  `DATABASE_URL` points at a hosted Postgres instance (Neon/Supabase free
-  tier — a one-line config change, no schema changes).
 - A `Referral` row currently supports exactly one referred lead
   (`referredLeadId` is unique per referral). A client wanting to refer
   multiple people needs multiple codes issued manually today — a
@@ -308,7 +307,7 @@ guesses.
   without a deploy. This isn't just a claim — `prisma/schema.prisma` implements
   the full future data model (leads, clients, packages, consultants, client
   packages, appointments, progress reviews, referrals, resume analyses) on
-  SQLite, seeded and wired to a real write path from `/contact`. See
+  Postgres (Neon), seeded and wired to a real write path from `/contact`. See
   **Optional — future-schema demo** above to run it, and
   [`docs/architecture/future-schema.md`](docs/architecture/future-schema.md)
   for the ERD and exactly what's demo-only vs. production-ready.

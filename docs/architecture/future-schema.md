@@ -6,8 +6,8 @@ direction in mind (profiles, career tools, resume analysis, consultants
 managing clients, client progress tracking, appointment management,
 referrals). This doc was originally a sketch only; **as of 2026-08-18 it's
 implemented as a working demo** (see "Demo implementation" below) so the
-schema isn't just a diagram — it's a real, running SQLite database with
-seed data and a page to inspect it live.
+schema isn't just a diagram — it's a real, running database (Postgres via
+Neon, as of 2026-08-19) with seed data and a page to inspect it live.
 
 The public marketing site is unaffected: it still reads from `content/*.ts`
 as before (see README → Architecture). This is an additive demo layer, not
@@ -16,8 +16,8 @@ a replacement — a deliberate scope call explained below.
 ## Demo implementation (2026-08-18)
 
 - **Schema:** `prisma/schema.prisma` — every entity below, as real Prisma
-  models, on SQLite (`DATABASE_URL="file:./dev.db"` in `.env.example`,
-  zero external setup required).
+  models, on Postgres (Neon free tier; `DATABASE_URL` set in `.env`, not
+  committed).
 - **Seed data:** `prisma/seed.mjs` — the 4 real packages (mirroring
   `src/content/services.ts`), a consultant, a lead converted to a client,
   a client package, two appointments, a progress review, a referral, and a
@@ -32,19 +32,15 @@ a replacement — a deliberate scope call explained below.
   you just submitted through `/contact`. Not linked from nav or footer,
   `robots: noindex`, no auth (this is a local/demo convenience, not a real
   admin panel — see "What this demo is not" below).
-- **Setup:** `npx prisma migrate dev` then `npm run db:seed` (both already
-  run once for this repo — `prisma/dev.db` is gitignored, so a fresh clone
-  needs to redo both steps).
+- **Setup:** get a free Postgres instance from
+  [Neon](https://neon.tech) or [Supabase](https://supabase.com), set
+  `DATABASE_URL` in `.env` (the Prisma CLI only reads `.env`, not
+  `.env.local`), then `npx prisma migrate dev` followed by `npm run
+  db:seed`. Already run once for this repo against a real Neon instance —
+  a fresh clone needs its own `DATABASE_URL` and to redo both steps.
 
 ### What this demo is not
 
-- Not production-ready as-is: SQLite's file-based storage doesn't survive
-  Vercel's ephemeral serverless filesystem, so the live deployed site's
-  `/contact` and `/tools/resume-scorer` DB writes will fail their
-  (non-fatal, try/caught) inserts in production until this is pointed at a
-  real hosted Postgres (Neon/Supabase free tier — a one-line `DATABASE_URL`
-  and `provider` change, no schema changes). Locally (`npm run dev`) it
-  works fully.
 - No auth on `/internal/demo` — acceptable for a local demo, not for
   anything real. A production admin/portal view would sit behind the same
   future auth provider described in README → Architecture.

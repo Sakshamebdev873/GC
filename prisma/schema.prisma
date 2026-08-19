@@ -1,7 +1,8 @@
 // Demo implementation of the SaaS data model sketched in
-// docs/architecture/future-schema.md. SQLite so it runs with zero external
-// setup for a live demo — see that doc's "Swapping to Postgres for
-// production" note for what changes to go live for real.
+// docs/architecture/future-schema.md. Postgres (Neon) so writes actually
+// persist on Vercel's serverless filesystem — this schema originally ran on
+// local SQLite for zero-setup dev; see git history around 2026-08-19 for
+// that version if reverting.
 //
 // This is additive: the public marketing site still reads from
 // src/content/*.ts (see README → Architecture). Nothing here replaces that.
@@ -14,7 +15,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
