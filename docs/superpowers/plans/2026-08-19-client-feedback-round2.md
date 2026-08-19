@@ -1054,24 +1054,31 @@ All confirmed. Dev server stopped after verification.
 
 ---
 
-## Status: all 13 tasks complete, nothing committed (2026-08-19)
+## Status: all 13 tasks complete and committed locally (2026-08-19)
 
-Every task above is implemented and verified locally (lint, build, and
-manual/curl-driven browser checks — see each task's steps). **No git
-commits were made** — all work sits as local, uncommitted changes and new
-files, per explicit instruction to keep phases local until asked to
-commit. `git status` at the end of this session:
+Every task above is implemented, verified (lint, build, manual/curl-driven
+browser checks — see each task's steps), and now committed as 10 local
+commits on `main`, one per task that produced a file change (Tasks 8, 10,
+and 13 had nothing to commit — env-only, verification-only, and
+verification-only respectively). **Nothing has been pushed** — `main` is
+10 commits ahead of `origin/main`, entirely local, per instruction to keep
+this work local until told otherwise.
 
-- Modified: `.env.example`, `README.md`, `docs/architecture/future-schema.md`,
-  `prisma/schema.prisma`, `prisma/seed.mjs`, `src/app/api/contact/route.ts`,
-  `src/app/global-error.tsx`, `src/app/globals.css`.
-- New: `docs/round-2-response.md`, `docs/superpowers/plans/2026-08-19-client-feedback-round2.md`
-  (this file), `src/app/api/admin/convert-lead/route.ts`,
-  `src/app/api/admin/redeem-referral/route.ts`,
-  `src/app/internal/admin/page.tsx`, `src/content/referralRewards.ts`,
-  `src/lib/referralCode.ts`, `src/proxy.ts`.
-- Local-only, gitignored, not part of any commit: `.env.local`
-  (`NEXT_PUBLIC_CALENDLY_URL` override).
+```
+f8ea5e5 docs: rewrite README to cover full submission requirements
+ca6cf4f docs: add round-2 response doc and implementation plan
+e382c40 docs: update referral reward-type naming and document the real conversion-triggered flow
+de10440 feat: add referral admin visibility page
+f48aed7 feat: add lead-conversion and referral-redemption admin routes
+1427c4e feat: add optional Basic Auth gate for internal/admin routes
+04173a0 feat: link submitted referral codes to their Referral row on lead capture
+775c79b feat: add referral code generator
+14332c6 feat: add configurable referral reward-type registry
+9178c27 style: replace orange accent with blue per client feedback
+```
+
+Local-only, gitignored, not part of any commit: `.env.local`
+(`NEXT_PUBLIC_CALENDLY_URL` override).
 
 One deviation from the plan as originally written, discovered mid-execution
 and threaded through consistently: this Next.js version renamed the
@@ -1079,5 +1086,5 @@ and threaded through consistently: this Next.js version renamed the
 throughout, not `middleware.ts`. See Task 5's deviation note and
 `docs/round-2-response.md` for details.
 
-Next step when ready: review the diff, then commit (grouped by task or as
-one changeset, whichever you prefer) and decide on branch/PR strategy.
+Next step when ready: `git push` to publish, and decide on branch/PR
+strategy if this should land via a PR rather than directly to `main`.
