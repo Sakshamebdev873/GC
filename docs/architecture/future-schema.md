@@ -156,7 +156,7 @@ erDiagram
         uuid referrer_client_id FK
         string code UK
         uuid referred_lead_id FK "nullable until someone uses the code"
-        string reward_type "free_session, cashback, extended_timeline"
+        string reward_type "free_session, bonus_service, extended_timeline — see src/content/referralRewards.ts"
         string reward_status "pending, earned, redeemed"
         timestamp created_at
     }
@@ -177,7 +177,7 @@ erDiagram
 |---|---|
 | `src/content/services.ts` (`Service[]`, fields `name`, `duration`, `additions`, `builtOnSlug`, `priceINR`, `recommended`) | `packages` + `package_features` tables. `builtOnSlug` → `built_on_package_id` self-reference, same "everything in X, plus" logic. |
 | `src/lib/validation.ts` `LeadFormInput` (`name`, `email`, `message`, `referralCode`) | `leads` table, 1:1 field match — **done**: `src/app/api/contact/route.ts` now writes a `Lead` row alongside the existing console log. |
-| `LeadForm.tsx` referral code field | `referrals.code` lookup on submit — if the code matches an existing `referrals` row, set `leads.referral_code` and later `referrals.referred_lead_id` on conversion. Reward issuance (free session / cashback / extended timeline) is a manual or semi-automated step triggered when a `client_packages` row is created for the referred client — not built in the MVP. |
+| `LeadForm.tsx` referral code field | **Implemented** (2026-08-19): `/api/contact` links a submitted code to its `Referral` row immediately (`referredLeadId`), but reward `rewardStatus` stays `pending` until `/internal/admin`'s "Mark converted" action fires — this is the conversion-gated trigger Mind Loop asked for. Reward types are configurable via `src/content/referralRewards.ts`, not hardcoded. Each newly converted client is auto-issued their own shareable code (`src/lib/referralCode.ts`) so the loop continues. |
 | `site.calendlyUrl` (single site-wide link) | Per-consultant Calendly link on the `consultants` row, so `/book-a-call` can eventually route to the assigned consultant instead of one shared calendar. |
 | `/tools/resume-scorer` placeholder page | `resume_analyses` table + an upload endpoint. `recommended_package_id` is how a score routes a visitor toward a specific package, matching the "AI-generated suggestions → directed toward relevant services" requirement. |
 | No auth | Route groups already isolate marketing pages from anything future (see README). A `/dashboard` (client: `client_packages`, `appointments`, `progress_reviews` for their own `client_id`) and a `/portal` (consultant: same tables scoped by `consultant_id`) can be added behind an auth provider (Clerk/NextAuth/Supabase Auth) without touching the marketing site's routes or components. |
@@ -188,11 +188,15 @@ erDiagram
   of truth for what visitors see — the database is a parallel demo layer,
   not wired into the live pages, so a package edit still means editing
   `services.ts` (see "Demo implementation" above for why).
-- No auth, no real admin/dashboard UI — `/internal/demo` is read-only and
-  unauthenticated, explicitly a demo convenience, not a portal.
-- No reward automation for referrals — the lead form captures the code and
-  it's stored on the `Lead` row; matching it to a `Referral` and issuing a
-  reward is still a manual/future step.
+- `/internal/demo` remains read-only. `/internal/admin` (new, 2026-08-19)
+  performs real mutations and is gated by an optional Basic Auth proxy
+  (`src/proxy.ts`), off by default. Turn it on via `ADMIN_USER`/
+  `ADMIN_PASSWORD` before using this beyond a local demo.
+- Reward *redemption* (earned → redeemed) is a manual admin click in
+  `/internal/admin`, not automated — issuing an actual free session,
+  service credit, or timeline extension still requires a human to act on
+  it operationally. Earning the reward (pending → earned) is automated on
+  conversion.
 - No real resume parsing/scoring — `/tools/resume-scorer` is still a
   placeholder page; `ResumeAnalysis` rows exist in the schema/seed data to
   prove the shape, not from a real upload flow.

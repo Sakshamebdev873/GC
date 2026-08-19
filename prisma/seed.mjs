@@ -182,6 +182,8 @@ async function main() {
   }
 
   console.log("Seeding a referral...");
+  // Reward type ids must match src/content/referralRewards.ts (the source
+  // of truth for what's configurable) — "free_session" here, not "cashback".
   const existingReferral = await prisma.referral.findFirst({ where: { referrerClientId: client.id } });
   if (!existingReferral) {
     await prisma.referral.create({

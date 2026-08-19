@@ -122,7 +122,9 @@ model Referral {
   code             String   @unique
   referredLeadId   String?  @unique
   referredLead     Lead?    @relation("ReferralConversion", fields: [referredLeadId], references: [id])
-  rewardType       String // free_session | cashback | extended_timeline
+  // Validated against src/content/referralRewards.ts at the application
+  // layer, not a DB enum — new reward types don't need a migration.
+  rewardType       String // free_session | bonus_service | extended_timeline
   rewardStatus     String   @default("pending") // pending | earned | redeemed
   createdAt        DateTime @default(now())
 }
